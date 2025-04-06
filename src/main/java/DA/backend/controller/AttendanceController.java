@@ -33,7 +33,7 @@ public class AttendanceController {
     @PostMapping("/generate-code")
     public ResponseEntity<String> generateCode(
             @RequestParam String userId,
-            @RequestParam AttendanceCodeType type) { 
+            @RequestParam AttendanceCodeType type) {  // Đổi String thành AttendanceCodeType
         try {
             String qrContent = attendanceService.generateAttendanceCode(userId, type);
             return ResponseEntity.ok(qrContent);
@@ -41,6 +41,4 @@ public class AttendanceController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
-
-    
 }

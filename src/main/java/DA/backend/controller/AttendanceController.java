@@ -92,6 +92,15 @@ public class AttendanceController {
         return ResponseEntity.ok(attendanceService.searchAttendanceHistory(request));
     }
 
+    // Xem thống kê cá nhân
+    @GetMapping("/summary")
+    public ResponseEntity<UserAttendanceSummaryDTO> getUserSummary(
+            @RequestParam String userId,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate) {
+        return ResponseEntity.ok(attendanceService.getUserAttendanceSummary(userId, startDate, endDate));
+    }
+
     // Yêu cầu chỉnh sửa chấm công
     @PostMapping("/request-modification")
     public ResponseEntity<AttendanceModificationRequest> requestModification(
@@ -101,6 +110,25 @@ public class AttendanceController {
             request.setUserId(userId);
             AttendanceModificationRequest modRequest = attendanceService.createModificationRequest(request);
             return ResponseEntity.ok(modRequest);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(null);
+        }
+    }
+
+    // Xem trạng thái yêu cầu chỉnh sửa
+    @GetMapping("/modification-requests")
+    public ResponseEntity<List<AttendanceModificationRequest>> getModificationRequests(
+            @RequestParam String userId) {
+        return ResponseEntity.ok(attendanceService.getUserModificationRequests(userId));
+    }
+
+    @GetMapping("/by-date")
+    public ResponseEntity<Attendance> getAttendanceByDate(
+            @RequestParam String userId,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
+        try {
+            Attendance attendance = attendanceService.getAttendanceByDate(userId, date);
+            return ResponseEntity.ok(attendance);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(null);
         }

@@ -42,5 +42,77 @@ public class AttendanceController {
         }
     }
 
-    
+    // API check-in với mã và GPS
+    @PostMapping("/check-in")
+    public ResponseEntity<?> checkIn(
+            @RequestParam String userId,
+            @RequestParam String code,
+            @RequestParam Double latitude,
+            @RequestParam Double longitude,
+            @RequestParam(required = false) String address) {
+        try {
+            Attendance attendance = attendanceService.checkIn(userId, code, latitude, longitude, address);
+            return ResponseEntity.ok(attendance);
+        } catch (RuntimeException e) {
+            // Trả về lỗi chi tiết thay vì null
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    // API check-out với mã và GPS
+    @PostMapping("/check-out")
+    public ResponseEntity<Attendance> checkOut(
+            @RequestParam String userId,
+            @RequestParam String code,
+            @RequestParam Double latitude,
+            @RequestParam Double longitude,
+            @RequestParam(required = false) String address) {
+        try {
+            Attendance attendance = attendanceService.checkOut(userId, code, latitude, longitude, address);
+            return ResponseEntity.ok(attendance);
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(null);
+        }
+    }
+
+    // Xem lịch sử chấm công cá nhân
+    @GetMapping("/history")
+    public ResponseEntity<List<AttendanceDTO>> searchHistory(
+            @RequestParam String userId,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        AttendanceSearchRequest request = new AttendanceSearchRequest();
+        request.setUserId(userId);
+        request.setStartDate(startDate);
+        request.setEndDate(endDate);
+        request.setPage(page);
+        request.setSize(size);
+        return ResponseEntity.ok(attendanceService.searchAttendanceHistory(request));
+    }
+
+    // Xem thống kê cá nhân
+    @GetMapping("/summary")
+    public ResponseEntity<UserAttendanceSummaryDTO> getUserSummary(
+            @RequestParam String userId,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate) {
+        return ResponseEntity.ok(attendanceService.getUserAttendanceSummary(userId, startDate, endDate));
+    }
+
+    // Yêu cầu chỉnh sửa chấm công
+    @PostMapping("/request-modification")
+    public ResponseEntity<AttendanceModificationRequest> requestModification(
+            @RequestBody AttendanceUpdateRequest request,  // Thêm @RequestBody
+            @RequestParam String userId) {
+        try {
+            request.setUserId(userId);
+            AttendanceModificationRequest modRequest = attendanceService.createModificationRequest(request);
+            return ResponseEntity.ok(modRequest);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(null);
+        }
+    }
+
 }

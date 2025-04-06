@@ -92,15 +92,6 @@ public class AttendanceController {
         return ResponseEntity.ok(attendanceService.searchAttendanceHistory(request));
     }
 
-    // Xem thống kê cá nhân
-    @GetMapping("/summary")
-    public ResponseEntity<UserAttendanceSummaryDTO> getUserSummary(
-            @RequestParam String userId,
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate) {
-        return ResponseEntity.ok(attendanceService.getUserAttendanceSummary(userId, startDate, endDate));
-    }
-
     // Yêu cầu chỉnh sửa chấm công
     @PostMapping("/request-modification")
     public ResponseEntity<AttendanceModificationRequest> requestModification(

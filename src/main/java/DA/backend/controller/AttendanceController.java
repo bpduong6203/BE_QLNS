@@ -100,4 +100,5 @@ public class AttendanceController {
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate) {
         return ResponseEntity.ok(attendanceService.getUserAttendanceSummary(userId, startDate, endDate));
     }
+
 }

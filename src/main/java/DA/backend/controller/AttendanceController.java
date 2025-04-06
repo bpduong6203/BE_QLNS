@@ -41,6 +41,4 @@ public class AttendanceController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
-
-    
 }

@@ -91,4 +91,19 @@ public class AttendanceController {
         request.setSize(size);
         return ResponseEntity.ok(attendanceService.searchAttendanceHistory(request));
     }
+
+    // Yêu cầu chỉnh sửa chấm công
+    @PostMapping("/request-modification")
+    public ResponseEntity<AttendanceModificationRequest> requestModification(
+            @RequestBody AttendanceUpdateRequest request,  // Thêm @RequestBody
+            @RequestParam String userId) {
+        try {
+            request.setUserId(userId);
+            AttendanceModificationRequest modRequest = attendanceService.createModificationRequest(request);
+            return ResponseEntity.ok(modRequest);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(null);
+        }
+    }
+
 }

@@ -41,4 +41,21 @@ public class AttendanceController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
+
+    // API check-in với mã và GPS
+    @PostMapping("/check-in")
+    public ResponseEntity<?> checkIn(
+            @RequestParam String userId,
+            @RequestParam String code,
+            @RequestParam Double latitude,
+            @RequestParam Double longitude,
+            @RequestParam(required = false) String address) {
+        try {
+            Attendance attendance = attendanceService.checkIn(userId, code, latitude, longitude, address);
+            return ResponseEntity.ok(attendance);
+        } catch (RuntimeException e) {
+            // Trả về lỗi chi tiết thay vì null
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
 }
